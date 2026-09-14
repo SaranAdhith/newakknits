@@ -1,0 +1,65 @@
+/* Cotton, yarn and stitch details. All are decorative and ignore pointer input. */
+.has-thread { isolation: isolate; }
+.thread-edge { position: absolute; top: 65px; right: 0; width: clamp(70px, 10vw, 160px); height: 480px; z-index: -1; overflow: hidden; pointer-events: none; color: #e6ae86; opacity: .54; }
+.light .thread-edge { color: #ad654b; opacity: .35; }
+.thread-edge-1 { left: 0; right: auto; top: 210px; transform: scaleX(-1); }
+.thread-edge-2 { top: 90px; height: 420px; }
+.thread-guide { stroke: currentColor; stroke-width: 1.1; opacity: .12; }
+.thread-yarn { stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--thread-progress, 1)); transition: stroke-dashoffset .15s linear; }
+.thread-highlight { stroke: #fff4d9; stroke-width: .65; stroke-linecap: round; opacity: .65; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--thread-progress, 1)); transition: stroke-dashoffset .15s linear; }
+.light .thread-highlight { stroke: #eac5a6; }
+#hero .thread-edge { z-index: 2; top: 125px; height: 66%; width: clamp(90px, 13vw, 205px); opacity: .7; right: 15px; }
+.knit-ribbon { max-width: 760px; margin: 70px auto 0; pointer-events: none; color: #a8664e; opacity: .6; mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent); }
+.knit-ribbon svg { display: block; width: 100%; height: auto; overflow: hidden; }
+/* Each stitch draws over a seven-stitch window, so neighbours overlap into one
+   travelling wave instead of popping in one at a time; the longer ease-out
+   also absorbs frame-to-frame scroll jitter. Index 43 completes at .96. */
+.knit-loop { stroke: currentColor; stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - clamp(0, calc((var(--thread-progress, 1) * 52 - var(--stitch-index)) / 7), 1)); transition: stroke-dashoffset .45s cubic-bezier(.22, .61, .36, 1); }
+.knitting-needles { display: block; width: 100px; height: 70px; margin: 28px auto -12px; overflow: visible; pointer-events: none; }
+.needle { stroke: #e5b98b; stroke-width: 2.2; stroke-linecap: round; transform-box: view-box; transform-origin: 50% 58%; animation: needle-knit 2.8s ease-in-out infinite; animation-play-state: paused; }
+.needle circle { fill: #e5b98b; stroke-width: 1; }
+.needle-1 { animation-direction: reverse; animation-delay: -.7s; }
+.needle-yarn { stroke: #db9271; stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--thread-progress, 1)); }
+.thread-visible .needle { animation-play-state: running; }
+@keyframes needle-knit { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(6deg); } }
+.thread-studio { max-width: 960px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 45px; align-items: center; text-align: left; margin: 65px auto 0; padding-top: 40px; border-top: 1px solid #f2eee51c; }
+.thread-art { margin: 0; min-width: 0; }
+.thread-art img { width: 100%; height: auto; display: block; object-fit: contain; animation: yarn-float 7s ease-in-out infinite; animation-play-state: paused; }
+.thread-visible .thread-art img { animation-play-state: running; }
+.thread-studio .thread-kicker { color: #e6ae86; font: .57rem var(--f-mono); letter-spacing: .18em; margin: 0 0 19px; }
+.thread-studio h3 { font-family: var(--f-editorial); font-weight: 400; font-size: clamp(2rem, 3.6vw, 3.2rem); letter-spacing: -.04em; line-height: 1.2; color: #f2eee5; }
+.thread-studio h3 em { color: #e6ae86; }
+.thread-studio .thread-copy { margin: 20px 0 0; max-width: 35ch; font-size: .85rem; line-height: 1.85; color: #bcbacc; }
+/* Scroll-linked entrance off the --thread-progress that textiles.js already
+   sets on the studio. The yarn swings in from the left and settles upright;
+   the kicker, title and copy rise in behind it. The img keeps its own float. */
+.thread-studio > :is(.thread-art, div) { transition: opacity .55s cubic-bezier(.22, .61, .36, 1), transform .55s cubic-bezier(.22, .61, .36, 1); }
+.thread-studio .thread-art { --at: clamp(0, calc(var(--thread-progress, 1) / .7), 1); opacity: var(--at); transform: translate(calc((1 - var(--at)) * -48px), calc((1 - var(--at)) * 26px)) rotate(calc((1 - var(--at)) * -7deg)) scale(calc(.94 + var(--at) * .06)); transform-origin: 60% 70%; }
+.thread-studio :is(.thread-kicker, h3, .thread-copy) { --at: clamp(0, calc((var(--thread-progress, 1) - var(--offset, 0)) / .5), 1); opacity: var(--at); transform: translateY(calc((1 - var(--at)) * 34px)); transition: opacity .5s cubic-bezier(.22, .61, .36, 1), transform .5s cubic-bezier(.22, .61, .36, 1); }
+.thread-studio .thread-kicker { --offset: .18; }
+.thread-studio h3 { --offset: .28; }
+.thread-studio .thread-copy { --offset: .4; }
+@keyframes yarn-float { 0%, 100% { transform: translateY(3px) rotate(-1deg); } 50% { transform: translateY(-6px) rotate(1deg); } }
+.thread-tab-hidden .needle, .thread-tab-hidden .thread-art img { animation-play-state: paused !important; }
+@media (min-width: 1450px) { .thread-edge { width: min(12vw, 190px); } }
+@media (max-width: 959px) {
+  .thread-edge { width: 78px; height: 340px; opacity: .3; }
+  .light .thread-edge { opacity: .2; }
+  #hero .thread-edge { top: 100px; right: 0; width: 80px; opacity: .4; }
+  .thread-studio { gap: 25px; }
+}
+@media (max-width: 640px) {
+  .thread-edge { width: 42px; height: 300px; opacity: .25; }
+  .light .thread-edge { opacity: .18; }
+  #hero .thread-edge { top: 88px; width: 50px; height: 75%; opacity: .35; }
+  .thread-studio { grid-template-columns: minmax(0, 1fr); gap: 12px; padding-top: 28px; margin-top: 45px; text-align: center; }
+  .thread-art { width: min(100%, 350px); margin: 0 auto; }
+  .thread-studio .thread-copy { margin: 18px auto 0; }
+  .knit-ribbon { margin-top: 44px; }
+  .knitting-needles { width: 80px; height: 56px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thread-yarn, .thread-highlight, .knit-loop, .needle-yarn { stroke-dashoffset: 0; transition: none; }
+  .needle, .thread-art img { animation: none; transform: none; }
+  .thread-studio .thread-art, .thread-studio :is(.thread-kicker, h3, .thread-copy) { opacity: 1; transform: none; transition: none; }
+}

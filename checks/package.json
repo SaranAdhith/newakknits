@@ -1,0 +1,6 @@
+{
+  "name": "sri-ashwath-website-checks",
+  "private": true,
+  "scripts": { "test": "node check.cjs" },
+  "devDependencies": { "linkedom": "0.18.13", "cssom": "0.5.0" }
+}

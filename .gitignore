@@ -1,0 +1,7 @@
+.DS_Store
+Thumbs.db
+*.swp
+node_modules/
+# Original camera media (~1GB); optimised copies live in assets/
+New folder/
+*.bak
