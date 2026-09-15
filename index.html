@@ -2839,15 +2839,31 @@ if (hasGSAP && !reduce) {
   vid.load();
 
   /* canplay, not loadeddata: canplay means it can actually start without
-     stalling, which is the point at which fading it in is safe */
+     stalling, which is the point at which fading it in is safe. The fade-in
+     itself must not be gated on visibility - only the .play() call should be -
+     otherwise a canplay that fires while the tab happens to be backgrounded
+     (loaded in a new tab, or the user switches away mid-load) leaves the video
+     playing invisibly forever: this listener is {once:true}, so returning
+     early here means the .on class never gets added, even after the tab
+     becomes visible again and visibilitychange resumes playback below. */
   vid.addEventListener('canplay', function(){
+    vid.classList.add('on');
     if (document.body.classList.contains('motion-paused') || document.hidden) return;
     var p = vid.play();
     /* autoplay can still be refused (low power mode, a platform policy).
        A rejected promise is not an error here - the photograph stays. */
     if (p && p.catch) p.catch(function(){});
-    vid.classList.add('on');
   }, { once:true });
+
+  /* a transient network blip can fail the request outright rather than just
+     stalling it; one retry covers that before giving up and leaving the
+     photograph on screen for good */
+  var retriedAfterError = false;
+  vid.addEventListener('error', function(){
+    if (retriedAfterError) return;
+    retriedAfterError = true;
+    vid.load();
+  });
 
   /* a tab in the background still decodes frames; stop paying for that */
   document.addEventListener('visibilitychange', function(){
